@@ -1,20 +1,19 @@
-import { AppHeader } from '@components';
-import { ConstructorPage } from '@pages';
-import { Preloader } from '@ui';
 import { Routes, Route } from 'react-router-dom';
 
+import { AppHeader, IngredientDetails, OrderInfo } from '@components';
+import { useFetchIngredients } from '@hooks/useFetchIngredients';
+import { ConstructorPage, Feed, Login, NotFound404, Profile, ProfileOrders, Register, ResetPassword, ForgotPassword } from '@pages';
+import { Preloader } from '@ui';
+
 import type { AppContentProps } from './type';
-import type { TIngredient } from '@utils-types';
 
 import '../../index.css';
 
 import styles from './app.module.css';
 
 const App = (): React.JSX.Element => {
-  const ingredients: TIngredient[] = [];
-  const isIngredientsLoading = false;
-  const ingredientsError = null;
-
+  const { ingredients, isIngredientsLoading, ingredientsError } = useFetchIngredients();
+  
   return (
     <div className={styles.app}>
       <AppHeader />
@@ -36,6 +35,7 @@ const AppContent = ({
   isLoading,
   error,
 }: AppContentProps): React.JSX.Element => {
+  console.log('isLoading', isLoading);
   if (isLoading) {
     return <Preloader />;
   }
@@ -58,11 +58,25 @@ const AppContent = ({
   return <RouteComponent />;
 };
 
+
+
 const RouteComponent = (): React.JSX.Element => {
   return (
     <>
       <Routes>
         <Route path="/" element={<ConstructorPage />} />
+        <Route path="/feed" element={<Feed />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/profile/orders" element={<ProfileOrders />} />
+        <Route path="*" element={<NotFound404 />} />
+
+        <Route path="/feed/:number" element={<OrderInfo />} />
+        <Route path="/ingredients/:id" element={<IngredientDetails />} />
+        {/* <Route path="/profile/orders/:number" element={<ProtectedRoute> <OrderInfo /> </ProtectedRoute>} /> */}
       </Routes>
     </>
   );

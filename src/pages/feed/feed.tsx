@@ -14,6 +14,6 @@ export const Feed = (): React.JSX.Element => {
   if (!orders.length) {
     return <Preloader />;
   }
-
+  
   return <FeedUI orders={orders} handleGetFeeds={handleGetFeeds} />;
 };

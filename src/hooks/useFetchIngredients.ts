@@ -5,6 +5,7 @@ import { fetchIngredients, getError, getIngredients, getIslodaing } from '@/serv
 import { useSelector } from '@/services/store';
 import type { SerializedError } from '@reduxjs/toolkit';
 import { useDispatch } from '@/services/store';
+import { checkUserAuth } from '@/services/slices/userSlice';
 
 type UseFetchIngredientsResult = {
   ingredients: TIngredient[];
@@ -20,6 +21,7 @@ export const useFetchIngredients = (): UseFetchIngredientsResult => {
 
   useEffect(() => {
     dispatch(fetchIngredients());
+    dispatch(checkUserAuth());
   }, []);
 
   return { ingredients, isIngredientsLoading, ingredientsError };

@@ -4,13 +4,18 @@ import { setCookie } from '@/utils/cookie';
 import { LoginUI } from '@ui-pages';
 import { type SyntheticEvent, useState } from 'react';
 import { useDispatch } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 export const Login = (): React.JSX.Element => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorText, setErrorText] = useState('')
   const dispatch = useDispatch();
-
+  const navigate = useNavigate();
+  const location = useLocation();
+  const from =
+    (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? '/';
+  
   const handleSubmit = async (e: SyntheticEvent): Promise<void> => {
     e.preventDefault();
 
@@ -20,6 +25,7 @@ export const Login = (): React.JSX.Element => {
         setCookie('accessToken', accessToken);
         dispatch(setUser(user));
         setErrorText('');
+        navigate(from, { replace: true });
     } catch(error: unknown) {
       if (error instanceof Error) {
         setErrorText(error.message)

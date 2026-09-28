@@ -12,6 +12,12 @@ const initialState: TFeedState = {
   error: null,
 }
 
+export const getFeeds = createAsyncThunk(
+  'feed/getFeeds',
+  getFeedsApi,
+)
+
+
 const feedSlice = createSlice({
   name: 'feed',
   initialState,
@@ -61,9 +67,5 @@ const feedSlice = createSlice({
 export const { getOrders, getTotal, getTotalToday, getIsLoading, getError } = feedSlice.getSelectors((state: RootState) => state.feed);
 export const feedReducer = feedSlice.reducer;
 
-export const getFeeds = createAsyncThunk(
-  'feed/getFeeds',
-  getFeedsApi,
-)
 
 

@@ -9,6 +9,11 @@ const initialState: TIngredientsState = {
   error: null,
 };
 
+export const fetchIngredients = createAsyncThunk(
+  'ingredients/fetchIngredients',
+  getIngredientsApi,
+) 
+
 const ingredientsSlice = createSlice({
   name: 'ingredients',
   initialState,
@@ -38,7 +43,3 @@ const ingredientsSlice = createSlice({
 export const ingredientsReducer = ingredientsSlice.reducer;
 export const { getIngredients, getIslodaing, getError } = ingredientsSlice.getSelectors((state: RootState) => state.ingredients);
 
-export const fetchIngredients = createAsyncThunk(
-  'ingredients/fetchIngredients',
-  getIngredientsApi,
-) 

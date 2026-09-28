@@ -66,3 +66,17 @@ export type TIngredientsState = {
   error: SerializedError | null;
 };
 
+export type TUserState = {
+  user: TUser | null;
+  isAuthChecked: boolean;
+  orders: TOrder[];
+  isOrdersLoading: boolean;
+}
+
+export type TOrderState = {
+  order: TOrder | null;
+  ingredients: TIngredient[];
+  isLoading: boolean;
+  error: SerializedError | null;
+  
+};

@@ -6,26 +6,26 @@ import {
 } from '@krgaa/react-developer-burger-ui-components';
 
 import type { TAppHeaderUIProps } from './type';
-
+ 
 import styles from './app-header.module.css';
 
-export const AppHeaderUI = ({ userName }: TAppHeaderUIProps): React.JSX.Element => (
+export const AppHeaderUI = ({ userName, handleConstructorClick, handleClickFeed, handleClickProfile, isFeedPage, isProfilePage, isConstructorPage }: TAppHeaderUIProps): React.JSX.Element => (
   <header className={styles.header}>
     <nav className={`${styles.menu} p-4`}>
       <div className={styles.menu_part_left}>
-        <>
+        <div className={`${styles.link} ${isConstructorPage ? styles.link_active : ''}`} onClick={handleConstructorClick}>
           <BurgerIcon type={'primary'} />
           <p className="text text_type_main-default ml-2 mr-10">Конструктор</p>
-        </>
-        <>
+        </div>
+        <div className={`${styles.link} ${isFeedPage ? styles.link_active : ''}`} onClick={handleClickFeed}>
           <ListIcon type={'primary'} />
           <p className="text text_type_main-default ml-2">Лента заказов</p>
-        </>
+        </div>
       </div>
       <div className={styles.logo}>
         <Logo className="" />
       </div>
-      <div className={styles.link_position_last}>
+      <div className={`${styles.link_position_last} ${styles.link} ${isProfilePage ? styles.link_active : ''}`} onClick={handleClickProfile}>
         <ProfileIcon type={'primary'} />
         <p className="text text_type_main-default ml-2">
           {userName ?? 'Личный кабинет'}

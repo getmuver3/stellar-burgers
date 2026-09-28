@@ -3,6 +3,11 @@
   margin: 0 auto;
 }
 
+.number {
+  margin: 0;
+  text-align: center;
+}
+
 .header {
   margin: 0;
 }

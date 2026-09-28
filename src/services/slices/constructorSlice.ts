@@ -12,6 +12,20 @@ const initialState: TConstructorState = {
   orderModalData: null,
 };
 
+export const orderBurger = createAsyncThunk<TNewOrderResponse, void, { state: RootState }>(
+  'constructor/OrderBurger',
+  (_, { getState }) => {
+    const { burgerConstructor: { constructorItems } } = getState();
+
+    const ingredientsList = [
+      ...constructorItems.ingredients,
+      ...(constructorItems.bun ? [constructorItems.bun] : [])
+    ].map(item => item._id)
+
+    return orderBurgerApi(ingredientsList);
+  }
+)
+
 const constructorSlice = createSlice({
   name: 'constructor',
   initialState,
@@ -87,17 +101,5 @@ export const { getConstructorItems, getOrderRequest, getOrderModalData } = const
 export const constructorReducer = constructorSlice.reducer;
 export const { addBun, removeBun, addIngredient, removeIngredient, clearOrder, moveIngredient } = constructorSlice.actions;
 
-export const orderBurger = createAsyncThunk<TNewOrderResponse, void, { state: RootState }>(
-  'constructor/OrderBurger',
-  (_, { getState }) => {
-    const { burgerConstructor: { constructorItems } } = getState();
 
-    const ingredientsList = [
-      ...constructorItems.ingredients,
-      ...(constructorItems.bun ? [constructorItems.bun] : [])
-    ].map(item => item._id)
-
-    return orderBurgerApi(ingredientsList);
-  }
-)
 

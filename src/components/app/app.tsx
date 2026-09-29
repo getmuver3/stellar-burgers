@@ -1,4 +1,4 @@
-import { Routes, Route, useLocation, useNavigate } from 'react-router-dom';
+import { Routes, Route, useLocation, useNavigate, useMatch } from 'react-router-dom';
 
 import { AppHeader, IngredientDetails, Modal, OrderInfo } from '@components';
 import { useFetchIngredients } from '@hooks/useFetchIngredients';
@@ -66,6 +66,11 @@ const RouteComponent = (): React.JSX.Element => {
   const navigate = useNavigate();
   const background = location.state?.background;
 
+  const feedMatch = useMatch('/feed/:number');
+  const profileMatch = useMatch('/profile/orders/:number');
+  const orderNumber = feedMatch?.params.number ?? profileMatch?.params.number;
+  const orderTitle = orderNumber ? `#${orderNumber}` : '';
+
   const closeModal = (): void => {
     navigate(-1);
   };
@@ -93,7 +98,15 @@ const RouteComponent = (): React.JSX.Element => {
             </div>
           }
         />
-        <Route path="/profile/orders/:number" element={<ProtectedRoute><OrderInfo /></ProtectedRoute>} />
+        <Route path="/profile/orders/:number" element={
+          <ProtectedRoute>
+            <div className={styles.detailPageWrap}>
+              <h1 className={`text text_type_main-large ${styles.detailHeader}`}>
+                {orderTitle}
+              </h1>
+              <OrderInfo />
+            </div>
+            </ProtectedRoute>} />
         <Route path="*" element={<NotFound404 />} />
       </Routes>
 
@@ -102,7 +115,7 @@ const RouteComponent = (): React.JSX.Element => {
           <Route
             path="/feed/:number"
             element={
-              <Modal title="Детали заказа" onClose={closeModal}>
+              <Modal title={orderTitle} onClose={closeModal}>
                 <OrderInfo />
               </Modal>
             }
@@ -119,7 +132,7 @@ const RouteComponent = (): React.JSX.Element => {
             path="/profile/orders/:number"
             element={
               <ProtectedRoute>
-                <Modal title="Детали заказа" onClose={closeModal}>
+                <Modal title={orderTitle} onClose={closeModal}>
                   <OrderInfo />
                 </Modal>
               </ProtectedRoute>

@@ -1,38 +1,40 @@
-import { setUser } from '@/services/slices/userSlice';
-import { registerUserApi } from '@/utils/burger-api';
-import { setCookie } from '@/utils/cookie';
+import {
+  getIsUserLoading,
+  getUserError,
+  registerUser,
+  resetUserError,
+} from '@/services/slices/userSlice';
+import { useDispatch, useSelector } from '@/services/store';
 import { RegisterUI } from '@ui-pages';
-import { type SyntheticEvent, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { type SyntheticEvent, useEffect, useState } from 'react';
 
 export const Register = (): React.JSX.Element => {
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorText, setErrorText] = useState('')
+  const errorText = useSelector(getUserError);
+  const isUserLoading = useSelector(getIsUserLoading);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetUserError());
+    };
+  }, [dispatch])
 
   const handleSubmit = async (e: SyntheticEvent): Promise<void> => {
     e.preventDefault();
 
-    try {
-      const { refreshToken, accessToken, user } = await registerUserApi({ email, password, name: userName });
-      localStorage.setItem('refreshToken', refreshToken);
-      setCookie('accessToken', accessToken);
-      dispatch(setUser(user));
-      setErrorText('');
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setErrorText(error.message)
-      } else {
-        setErrorText('An unknown error occurred')
-      }
+    if (isUserLoading) {
+      return;
     }
+
+    await dispatch(registerUser({ email, password, name: userName }));
   };
 
   return (
     <RegisterUI
-      errorText={errorText}
+      errorText={errorText ?? ''}
       email={email}
       userName={userName}
       password={password}
@@ -43,4 +45,3 @@ export const Register = (): React.JSX.Element => {
     />
   );
 };
-

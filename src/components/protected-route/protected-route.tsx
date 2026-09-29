@@ -1,6 +1,6 @@
 import { getIsAuthChecked, getUser } from "@/services/slices/userSlice";
 import { Preloader } from "@krgaa/react-developer-burger-ui-components";
-import { useSelector } from "react-redux";
+import { useSelector } from "@/services/store";
 import { Navigate, useLocation } from "react-router-dom";
 
 type TProtectedRouteProps = {
@@ -22,7 +22,8 @@ export const ProtectedRoute = ({ children, onlyUnAuth }: TProtectedRouteProps) =
   }
 
   if (onlyUnAuth && user) {  
-    return <Navigate replace to="/" />;
+    const { from } = (location.state as { from?: Location } | null) ?? {};
+    return <Navigate replace to={from ?? '/'} />;
   }
 
   return children

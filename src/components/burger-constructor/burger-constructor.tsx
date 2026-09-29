@@ -3,14 +3,13 @@ import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import type { TConstructorIngredient, TConstructorIngredients, TOrder } from '@utils-types';
-import { useSelector } from 'react-redux';
-import { clearOrder, getConstructorItems, getOrderModalData, getOrderRequest } from '@/services/slices/constructorSlice';
-import { orderBurger } from '@/services/slices/constructorSlice';
+import { useSelector } from '@/services/store';
+import { getConstructorItems } from '@/services/slices/constructorSlice';
+import { clearOrder, getOrderModalData, getOrderRequest, orderBurger } from '@/services/slices/newOrderSlice';
 import { getUser } from '@/services/slices/userSlice';
 import { useDispatch } from '@/services/store';
 
 export const BurgerConstructor = (): React.JSX.Element | null => {
-  /** TODO: Взять переменные constructorItems, orderRequest и orderModalData из стора */
   const constructorItems: TConstructorIngredients = useSelector(getConstructorItems);
   const orderRequest = useSelector(getOrderRequest);
   const orderModalData: TOrder | null = useSelector(getOrderModalData);
@@ -29,7 +28,7 @@ export const BurgerConstructor = (): React.JSX.Element | null => {
   };
 
   const closeOrderModal = (): void => {
-    // TODO: Закрыть модальное окно и сбросить заказ
+
     dispatch(clearOrder())
   };
 

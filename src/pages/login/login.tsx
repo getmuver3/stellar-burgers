@@ -1,43 +1,50 @@
-import { setUser } from '@/services/slices/userSlice';
-import { loginUserApi } from '@/utils/burger-api';
-import { setCookie } from '@/utils/cookie';
+import {
+  getIsUserLoading,
+  getUserError,
+  loginUser,
+  resetUserError,
+} from '@/services/slices/userSlice';
+import { useDispatch, useSelector } from '@/services/store';
 import { LoginUI } from '@ui-pages';
-import { type SyntheticEvent, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { type SyntheticEvent, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 export const Login = (): React.JSX.Element => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [errorText, setErrorText] = useState('')
+  const errorText = useSelector(getUserError);
+  const isUserLoading = useSelector(getIsUserLoading);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const location = useLocation();
-  const from =
-    (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? '/';
-  
+
+  const from = (location.state as { from?: { pathname?: string } } | null)?.from?.pathname ?? '/';
+
+  useEffect(() => {
+    return () => {
+      dispatch(resetUserError());
+    };
+  }, [dispatch])
+
   const handleSubmit = async (e: SyntheticEvent): Promise<void> => {
     e.preventDefault();
 
+    if (isUserLoading) {
+      return;
+    }
+
     try {
-      const { refreshToken, accessToken, user } = await loginUserApi({ email, password })
-        localStorage.setItem('refreshToken', refreshToken);
-        setCookie('accessToken', accessToken);
-        dispatch(setUser(user));
-        setErrorText('');
-        navigate(from, { replace: true });
-    } catch(error: unknown) {
-      if (error instanceof Error) {
-        setErrorText(error.message)
-      } else {
-        setErrorText('An unknown error occurred')
-      }
+      await dispatch(loginUser({ email, password })).unwrap()
+
+      navigate(from, { replace: true });
+    } catch (error) {
+      console.error('Login failed:', error);
     }
   };
 
   return (
     <LoginUI
-      errorText={errorText}
+      errorText={errorText ?? ''}
       email={email}
       setEmail={setEmail}
       password={password}

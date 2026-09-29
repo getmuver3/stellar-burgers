@@ -3,7 +3,7 @@ import { useMemo, useState, useRef, useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 
 import type { TIngredient, TTabMode } from '@utils-types';
-import { useSelector } from 'react-redux';
+import { useSelector } from '@/services/store';
 import { getIngredients } from '@/services/slices/ingredientsSlice';
 
 export const BurgerIngredients = (): React.JSX.Element => {
@@ -11,7 +11,7 @@ export const BurgerIngredients = (): React.JSX.Element => {
   const titleBunRef = useRef<HTMLHeadingElement>(null);
   const titleMainRef = useRef<HTMLHeadingElement>(null);
   const titleSaucesRef = useRef<HTMLHeadingElement>(null);
-  // TODO: Взять ингредиенты из стора
+
   const ingredients: TIngredient[] = useSelector(getIngredients);
 
   const [bunsRef, inViewBuns] = useInView({

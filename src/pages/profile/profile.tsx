@@ -1,14 +1,20 @@
-import { getUser, setUser } from '@/services/slices/userSlice';
-import { updateUserApi } from '@/utils/burger-api';
+import {
+  getIsUserLoading,
+  getUser,
+  getUserError,
+  resetUserError,
+  updateUser,
+} from '@/services/slices/userSlice';
+import { useDispatch, useSelector } from '@/services/store';
 import { ProfileUI } from '@ui-pages';
 import { type SyntheticEvent, useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
 
 export const Profile = (): React.JSX.Element => {
   /** TODO: Взять переменную из стора */
   const user = useSelector(getUser);
+  const updateUserError = useSelector(getUserError);
+  const isUserLoading = useSelector(getIsUserLoading);
   const dispatch = useDispatch();
-  const [updateUserError, setUpdateUserError] = useState('');
 
   const [formValue, setFormValue] = useState({
     name: user?.name || '',
@@ -24,6 +30,12 @@ export const Profile = (): React.JSX.Element => {
     }));
   }, [user]);
 
+  useEffect(() => {
+    return () => {
+      dispatch(resetUserError());
+    };
+  }, [dispatch]);
+
   const isFormChanged =
     formValue.name !== user?.name ||
     formValue.email !== user?.email ||
@@ -31,27 +43,27 @@ export const Profile = (): React.JSX.Element => {
 
   const handleSubmit = async (e: SyntheticEvent): Promise<void> => {
     e.preventDefault();
-    setUpdateUserError('');
 
-    try {
-      const { user: updatedUser } = await updateUserApi({
+    if (isUserLoading) {
+      return;
+    }
+
+    await dispatch(
+      updateUser({
         name: formValue.name,
         email: formValue.email,
         ...(formValue.password ? { password: formValue.password } : {}),
-      });
-      dispatch(setUser(updatedUser));
-      setFormValue({
-        name: updatedUser.name,
-        email: updatedUser.email,
-        password: '',
-      });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setUpdateUserError(error.message);
-      } else {
-        setUpdateUserError('Не удалось сохранить данные');
-      }
-    }
+      })
+    )
+      .unwrap()
+      .then((updatedUser) => {
+        setFormValue({
+          name: updatedUser.name,
+          email: updatedUser.email,
+          password: '',
+        });
+      })
+      .catch(() => undefined);
   };
 
   const handleCancel = (e: SyntheticEvent): void => {
@@ -74,7 +86,7 @@ export const Profile = (): React.JSX.Element => {
     <ProfileUI
       formValue={formValue}
       isFormChanged={isFormChanged}
-      updateUserError={updateUserError}
+      updateUserError={updateUserError ?? undefined}
       handleCancel={handleCancel}
       handleSubmit={handleSubmit}
       handleInputChange={handleInputChange}

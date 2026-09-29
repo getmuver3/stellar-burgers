@@ -1,4 +1,4 @@
-import type { SerializedError } from "@reduxjs/toolkit";
+import type { SerializedError } from '@reduxjs/toolkit';
 
 export type TIngredient = {
   _id: string;
@@ -48,6 +48,9 @@ export type TConstructorIngredients = {
 
 export type TConstructorState = {
   constructorItems: TConstructorIngredients;
+};
+
+export type TNewOrderState = {
   orderRequest: boolean;
   orderModalData: TOrder | null;
 };
@@ -71,12 +74,13 @@ export type TUserState = {
   isAuthChecked: boolean;
   orders: TOrder[];
   isOrdersLoading: boolean;
-}
+  isLoading: boolean;
+  error: string | null;
+};
 
 export type TOrderState = {
   order: TOrder | null;
   ingredients: TIngredient[];
   isLoading: boolean;
   error: SerializedError | null;
-  
 };

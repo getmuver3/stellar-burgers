@@ -8,7 +8,7 @@ import { fetchOrder, getOrder } from '@/services/slices/orderSlice';
 import { useDispatch, useSelector } from '@/services/store';
 
 export const OrderInfo = (): React.JSX.Element => {
-  /** TODO: взять переменные orderData и ingredients из стора */
+
   const { number } = useParams();
   const dispatch = useDispatch();
   const orderData = useSelector(getOrder);

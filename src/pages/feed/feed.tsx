@@ -7,12 +7,11 @@ import { useDispatch, useSelector } from '@/services/store';
 import { useEffect } from 'react';
 
 export const Feed = (): React.JSX.Element => {
-  // TODO: Взять переменную из стора
+
   const orders: TOrder[] = useSelector(getOrders);
   const dispatch = useDispatch();
 
   const handleGetFeeds = (): void => {
-    // TODO: Запросить ленту заказов
     dispatch(getFeeds())
   };
 

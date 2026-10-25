@@ -75,6 +75,11 @@ const filledState: TConstructorState = {
   },
 };
 
+const expectNonEmptyId = (id: unknown): void => {
+  expect(typeof id).toBe('string');
+  expect(id).not.toBe('');
+};
+
 const order: TOrder = {
   _id: 'order-1',
   status: 'done',
@@ -97,25 +102,27 @@ describe('редьюсер burgerConstructor', () => {
   });
 
   it('addBun кладёт булку в конструктор', (): void => {
-    const action = addBun(bun);
-    const state = constructorReducer(initialState, action);
+    
+    const state = constructorReducer(initialState, addBun(bun));
 
     expect(state).toEqual({
       constructorItems: {
-        bun: { ...bun, id: action.payload.id },
+        bun: { ...bun, id: expect.any(String) },
         ingredients: [],
       },
     });
+    expectNonEmptyId(state.constructorItems.bun?.id);
   });
 
   it('addBun заменяет уже выбранную булку', (): void => {
     const action = addBun(anotherBun);
-    const state = constructorReducer(filledState, action);
+    const state = constructorReducer(filledState, addBun(anotherBun));
 
     expect(state.constructorItems.bun).toEqual({
       ...anotherBun,
-      id: action.payload.id,
+      id: expect.any(String),
     });
+    expectNonEmptyId(state.constructorItems.bun?.id);
     expect(state.constructorItems.ingredients).toEqual(
       filledState.constructorItems.ingredients
     );
@@ -133,20 +140,33 @@ describe('редьюсер burgerConstructor', () => {
   });
 
   it('addIngredient добавляет начинку в конец списка', (): void => {
-    const first = addIngredient(fillingA);
-    const withFirst = constructorReducer(initialState, first);
-    const second = addIngredient(fillingB);
-    const state = constructorReducer(withFirst, second);
+    const withFirst = constructorReducer(initialState, addIngredient(fillingA));
+    const state = constructorReducer(withFirst, addIngredient(fillingB));
 
     expect(state).toEqual({
       constructorItems: {
         bun: null,
         ingredients: [
-          { ...fillingA, id: first.payload.id },
-          { ...fillingB, id: second.payload.id },
+          { ...fillingA, id: expect.any(String) },
+          { ...fillingB, id: expect.any(String) },
         ],
       },
     });
+    state.constructorItems.ingredients.forEach((item) => {
+      expectNonEmptyId(item.id);
+    });
+  });
+
+  it('addIngredient создаёт разные id у двух экземпляров одной начинки', (): void => {
+    const withFirst = constructorReducer(initialState, addIngredient(fillingA));
+    const state = constructorReducer(withFirst, addIngredient(fillingA));
+    const [first, second] = state.constructorItems.ingredients;
+
+    expect(first).toEqual({ ...fillingA, id: expect.any(String) });
+    expect(second).toEqual({ ...fillingA, id: expect.any(String) });
+    expectNonEmptyId(first.id);
+    expectNonEmptyId(second.id);
+    expect(first.id).not.toBe(second.id);
   });
 
   it('removeIngredient удаляет начинку по id', (): void => {

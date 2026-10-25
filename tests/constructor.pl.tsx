@@ -84,13 +84,14 @@ const openIngredientDetails = async (
 ): Promise<void> => {
   await ingredientCard(page, ingredient.name).getByRole('link').click();
 
-  await expect(page.getByRole('heading', { name: 'Детали ингредиента' })).toBeVisible();
+  const modal = page.locator('#modals');
+  await expect(modal.getByRole('heading', { name: 'Детали ингредиента' })).toBeVisible();
   await expect(
-    page.getByRole('heading', { name: ingredient.name, exact: true })
+    modal.getByRole('heading', { name: ingredient.name, exact: true })
   ).toBeVisible();
-  await expect(page.getByText('Калории, ккал')).toBeVisible();
+  await expect(modal.getByText('Калории, ккал')).toBeVisible();
   await expect(
-    page
+    modal
       .locator('li')
       .filter({ hasText: 'Калории, ккал' })
       .getByText(String(ingredient.calories), { exact: true })

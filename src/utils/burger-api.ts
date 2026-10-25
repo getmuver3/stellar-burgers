@@ -87,6 +87,7 @@ type TFeedsResponse = TServerResponse<{
   totalToday: number;
 }>;
 
+//done
 export const getIngredientsApi = (): Promise<TIngredient[]> =>
   fetch(`${URL}/ingredients`)
     .then((res) => checkResponse<TIngredientsResponse>(res))
@@ -95,6 +96,7 @@ export const getIngredientsApi = (): Promise<TIngredient[]> =>
       return Promise.reject(toApiError(data));
     });
 
+//done
 export const getFeedsApi = (): Promise<TFeedsResponse> =>
   fetch(`${URL}/orders/all`)
     .then((res) => checkResponse<TFeedsResponse>(res))
@@ -115,11 +117,12 @@ export const getOrdersApi = (): Promise<TOrder[]> =>
     return Promise.reject(toApiError(data));
   });
 
-type TNewOrderResponse = TServerResponse<{
+export type TNewOrderResponse = TServerResponse<{
   order: TOrder;
   name: string;
 }>;
 
+//done
 export const orderBurgerApi = (data: string[]): Promise<TNewOrderResponse> =>
   fetchWithRefresh<TNewOrderResponse>(`${URL}/orders`, {
     method: 'POST',
